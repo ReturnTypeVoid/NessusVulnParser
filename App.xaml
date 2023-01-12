@@ -1,9 +1,21 @@
 ﻿<Application x:Class="NessusVulnParser.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:NessusVulnParser"
-             StartupUri="MainWindow.xaml">
+             xmlns:local="clr-namespace:NessusVulnParser"    
+             xmlns:views="clr-namespace:NessusVulnParser.Views"
+             xmlns:viewModels="clr-namespace:NessusVulnParser.ViewModels"
+             xmlns:models="clr-namespace:NessusVulnParser.Models"
+             xmlns:core="clr-namespace:NessusVulnParser.Core">
     <Application.Resources>
-         
+        <!-- The following code defines a DataTemplate for the Vulnerabilities view model.
+          When an object of this type is used as a data context, the Vulnerabilities view will be used to display it. -->
+        <DataTemplate DataType="{x:Type viewModels:VulnerabilitiesViewModel}">
+            <views:Vulnerabilities/>
+        </DataTemplate>
+        <!-- The following code defines a DataTemplate for the FileLoader view model.
+          When an object of this type is used as a data context, the FileLoader view will be used to display it. -->
+        <DataTemplate DataType="{x:Type viewModels:FileLoaderViewModel}">
+            <views:FileLoader/>
+        </DataTemplate>
     </Application.Resources>
 </Application>

@@ -2,7 +2,7 @@
 
 namespace NessusVulnParser.ViewModels
 {
-    internal class VulnerabilitiesViewModel : ObservableObject
+    internal class VulnerabilitiesViewModel : BaseViewModel
     {
         public VulnerabilitiesViewModel()
         {
