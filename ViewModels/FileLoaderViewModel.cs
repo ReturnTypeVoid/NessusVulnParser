@@ -2,7 +2,7 @@
 
 namespace NessusVulnParser.ViewModels
 {
-    internal class FileLoaderViewModel : BaseViewModel
+    public class FileLoaderViewModel : BaseViewModel
     {
         public FileLoaderViewModel()
         {
