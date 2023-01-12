@@ -5,9 +5,9 @@ namespace NessusVulnParser.ViewModels
 {
     public class MainWindowViewModel : BaseViewModel
     {
-        private BaseViewModel _curretViewModel;
+        private BaseViewModel? _curretViewModel;
 
-        public BaseViewModel CurrentViewModel
+        public BaseViewModel? CurrentViewModel
         {
             get { return _curretViewModel; }
             set { _curretViewModel = value; NotifyPropertyChanged(); }

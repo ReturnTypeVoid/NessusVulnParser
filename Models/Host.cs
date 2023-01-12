@@ -3,7 +3,7 @@ using System.Net;
 
 namespace NessusVulnParser.Models
 {
-    internal class Host
+    public class Host
     {
         public IPAddress IPAddress { get; set; }
         public List<Vulnerability>? vulnerabilities { get; set; }

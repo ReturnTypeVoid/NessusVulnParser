@@ -7,6 +7,17 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-            
+        <ListView x:Name="listView" ItemsSource="{Binding Vulnerabilities}" SelectedItem="{Binding SelectedVulnerability}">
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Copy to clipboard" Command="{Binding CopyToClipboard}" CommandParameter="{Binding SelectedVulnerability}" />
+                </ContextMenu>
+            </ListView.ContextMenu>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </UserControl>
