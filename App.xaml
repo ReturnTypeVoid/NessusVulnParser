@@ -5,7 +5,8 @@
              xmlns:views="clr-namespace:NessusVulnParser.Views"
              xmlns:viewModels="clr-namespace:NessusVulnParser.ViewModels"
              xmlns:models="clr-namespace:NessusVulnParser.Models"
-             xmlns:core="clr-namespace:NessusVulnParser.Core">
+             xmlns:core="clr-namespace:NessusVulnParser.Core"
+             StartupUri="MainWindow.xaml">
     <Application.Resources>
         <!-- The following code defines a DataTemplate for the Vulnerabilities view model.
           When an object of this type is used as a data context, the Vulnerabilities view will be used to display it. -->
