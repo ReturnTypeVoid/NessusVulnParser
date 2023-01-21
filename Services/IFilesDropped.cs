@@ -1,4 +1,4 @@
-﻿namespace NessusVulnParser.Core
+﻿namespace NessusVulnParser.Services
 {
     public interface IFilesDropped
     {

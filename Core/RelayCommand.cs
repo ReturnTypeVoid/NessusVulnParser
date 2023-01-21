@@ -5,33 +5,28 @@ namespace NessusVulnParser.Core
 {
     public class RelayCommand : ICommand
     {
-        private Action<object> execute;
-        private Func<object, bool> canExecute;
+        private readonly Predicate<object> _canExecute;
+        private readonly Action<object> _execute;
 
-        public event EventHandler? CanExecuteChanged
+        public RelayCommand(Action<object> execute, Predicate<object> canExecute)
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            _canExecute = canExecute;
+            _execute = execute;
         }
 
-
-        public RelayCommand(Action<object> execute, Func<object, bool>? canExecute = null)
+        public event EventHandler CanExecuteChanged
         {
-            this.execute = execute;
-            this.canExecute = canExecute ?? (x => true);
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
         }
 
-        public bool CanExecute(object? parameter)
+        public bool CanExecute(object parameter)
         {
-            return true;
+            return _canExecute(parameter);
         }
-
-        public void Execute(object? parameter)
+        public void Execute(object parameter)
         {
-            if (parameter != null)
-            {
-                this.execute(parameter);
-            }
+            _execute(parameter);
         }
     }
 }

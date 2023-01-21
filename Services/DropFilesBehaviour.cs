@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Windows;
 
-namespace NessusVulnParser.Core
+namespace NessusVulnParser.Services
 {
     public class DropFilesBehavior
     {
