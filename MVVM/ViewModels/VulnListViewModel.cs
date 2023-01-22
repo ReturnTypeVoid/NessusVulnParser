@@ -1,32 +1,44 @@
 ﻿using NessusVulnParser.Core;
-using NessusVulnParser.Models;
+using NessusVulnParser.MVVM.Models;
+using NessusVulnParser.Services;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Xml;
-using System;
-using System.Threading.Tasks;
-
-namespace NessusVulnParser.ViewModels
+namespace NessusVulnParser.MVVM.ViewModels
 {
     public class VulnListViewModel : ViewModel
     {
         private List<Vulnerability>? _vulnerabilities;
         private Vulnerability? _selectedVulnerability;
-        private string? _xmlFilePath;
-        public RelayCommand CopyToClipboard { get; }
-
-        public string? XmlFilePath
+        public RelayCommand CopyToClipboardCommand { get; }
+        
+        private string? ReportFilePath
         {
-            get { return _xmlFilePath; }
+            get {
+                if (_navigation != null)
+                {
+                    return _navigation.XmlFilePath;   
+                }
+                return null;
+            }
+        }
+
+        private INavigationService? _navigation;
+
+        public INavigationService? Navigation
+        {
+            get => _navigation;
             set {
-                _xmlFilePath = value;
+                _navigation = value;
                 OnPropertyChanged();
             }
         }
 
         public Vulnerability? SelectedVulnerability
         {
-            get { return _selectedVulnerability; }
+            get => _selectedVulnerability;
             set {
                 _selectedVulnerability = value;
                 OnPropertyChanged();
@@ -35,16 +47,22 @@ namespace NessusVulnParser.ViewModels
 
         public List<Vulnerability>? Vulnerabilities
         {
-            get { return _vulnerabilities; }
+            get => _vulnerabilities;
             set {
                 _vulnerabilities = value;
                 OnPropertyChanged();
             }
         }
 
-        public VulnListViewModel()
+        public VulnListViewModel(INavigationService navService)
         {
+            _navigation = navService;
             LoadVulns();
+            CopyToClipboardCommand = new RelayCommand(execute: async _ =>
+            {
+                if (SelectedVulnerability != null)
+                    await ToClipBoard();
+            }, canExecute: _ => true);
         }
 
         private List<Vulnerability> GetVulnerabilities()
@@ -54,9 +72,9 @@ namespace NessusVulnParser.ViewModels
 
             try
             {
-                if (XmlFilePath != null)
+                if (ReportFilePath != null)
                 {
-                    xmlDoc.Load(XmlFilePath);
+                    xmlDoc.Load(ReportFilePath);
                 }
                 XmlNodeList vulnerabilityNodes = xmlDoc.GetElementsByTagName("ReportItem");
 
@@ -98,12 +116,7 @@ namespace NessusVulnParser.ViewModels
             }
             return vulnerabilities;
         }
-
-        private void SetXmlPath(string xmlPath)
-        {
-            XmlFilePath = xmlPath;
-        }
-
+        
         public void AddVulnerability(Vulnerability vulnerability)
         {
             if (_vulnerabilities == null)
@@ -111,7 +124,7 @@ namespace NessusVulnParser.ViewModels
                 return;
             }
             _vulnerabilities.Add(vulnerability);
-            OnPropertyChanged("Vulnerabilities");
+            OnPropertyChanged();
         }
 
         public void RemoveVulnerability(Vulnerability vulnerability)
@@ -121,22 +134,33 @@ namespace NessusVulnParser.ViewModels
                 return;
             }
             _vulnerabilities.Remove(vulnerability);
-            OnPropertyChanged("Vulnerabilities");
+            OnPropertyChanged();
         }
 
-        private void ToClipBoard(object parameter)
+        private async Task ToClipBoard()
         {
-            Vulnerability? selectedVulnerability = parameter as Vulnerability;
-            if (selectedVulnerability != null)
+            if (SelectedVulnerability != null)
             {
-                string textToCopy = selectedVulnerability.Name;
-                Clipboard.SetText(textToCopy);
+                var textToCopy = SelectedVulnerability.Name;
+                // While loop to wait 100ms between attempting to copy to the clipboard, in case the clipboard is being accessed by something else..
+                while (true)
+                {
+                    try
+                    {
+                        Clipboard.SetText(textToCopy);
+                        break;
+                    }
+                    catch (System.Runtime.InteropServices.COMException)
+                    {
+                        await Task.Delay(100); 
+                    }
+                }
             }
         }
 
         private async void LoadVulns()
         {
-            Vulnerabilities = await Task.Run(() => GetVulnerabilities());
+            Vulnerabilities = await Task.Run(GetVulnerabilities);
         }
     }
 }

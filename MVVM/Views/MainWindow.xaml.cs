@@ -1,7 +1,5 @@
-﻿using NessusVulnParser.ViewModels;
-using System.Windows;
-
-namespace NessusVulnParser
+﻿using System.Windows;
+namespace NessusVulnParser.MVVM.Views
 {
     public partial class MainWindow : Window
     {

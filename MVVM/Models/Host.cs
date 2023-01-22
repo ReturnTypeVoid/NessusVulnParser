@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Net;
-
-namespace NessusVulnParser.Models
+namespace NessusVulnParser.MVVM.Models
 {
     public class Host
     {
-        public IPAddress IPAddress { get; set; }
-        public List<Vulnerability>? vulnerabilities { get; set; }
+        private IPAddress? IpAddress { get; set; }
+        public List<Vulnerability>? Vulnerabilities { get; set; }
 
         public Host(IPAddress ipAddress)
         {
-            IPAddress = ipAddress;
+            IpAddress = ipAddress;
         }
     }
 }

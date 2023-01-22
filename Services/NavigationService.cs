@@ -5,14 +5,24 @@ namespace NessusVulnParser.Services
 {
     public class NavigationService : ObservableObject, INavigationService
     {
-        private ViewModel _currentView;
-        private readonly Func<Type, ViewModel> _viewModelFactory;
+        private ViewModel? _currentView;
+        private readonly Func<Type, ViewModel>? _viewModelFactory;
+        private string? _xmlFilePath;
 
-        public ViewModel CurrentView
+        public ViewModel? CurrentView
         {
             get => _currentView;
             set {
                 _currentView = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string? XmlFilePath
+        {
+            get => _xmlFilePath;
+            set {
+                _xmlFilePath = value;
                 OnPropertyChanged();
             }
         }
@@ -24,7 +34,11 @@ namespace NessusVulnParser.Services
 
         public void NavigateTo<TViewModel>() where TViewModel : ViewModel
         {
-            ViewModel viewModel = _viewModelFactory.Invoke((typeof(TViewModel)));
+            if (_viewModelFactory == null)
+            {
+                return;
+            }
+            var viewModel = _viewModelFactory.Invoke((typeof(TViewModel)));
             CurrentView = viewModel;
         }
     }

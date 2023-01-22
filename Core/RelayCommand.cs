@@ -14,18 +14,22 @@ namespace NessusVulnParser.Core
             _execute = execute;
         }
 
-        public event EventHandler CanExecuteChanged
+        public event EventHandler? CanExecuteChanged
         {
             add => CommandManager.RequerySuggested += value;
             remove => CommandManager.RequerySuggested -= value;
         }
 
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
-            return _canExecute(parameter);
+            return parameter == null || _canExecute(parameter);
         }
-        public void Execute(object parameter)
+        public void Execute(object? parameter)
         {
+            if (parameter == null)
+            {
+                return;
+            }
             _execute(parameter);
         }
     }

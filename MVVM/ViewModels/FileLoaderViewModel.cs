@@ -2,26 +2,28 @@
 using NessusVulnParser.Services;
 using System.IO;
 using System.Windows;
-
-namespace NessusVulnParser.ViewModels
+namespace NessusVulnParser.MVVM.ViewModels
 {
     public class FileLoaderViewModel : ViewModel, IFilesDropped
     {
-        private string _reportFilePath;
-
-        public string ReportFilePath
+        public FileLoaderViewModel(INavigationService navService)
         {
-            get => _reportFilePath;
+            _navigation = navService;
+        }
+
+        private string? ReportFilePath
+        {
             set {
-                _reportFilePath = value;
+                if (_navigation != null)
+                    _navigation.XmlFilePath = value;
                 OnPropertyChanged();
-                Navigation.NavigateTo<VulnListViewModel>();
+                Navigation?.NavigateTo<VulnListViewModel>();
             }
         }
 
         private INavigationService? _navigation;
 
-        public INavigationService? Navigation
+        private INavigationService? Navigation
         {
             get => _navigation;
             set {
@@ -30,11 +32,6 @@ namespace NessusVulnParser.ViewModels
             }
         }
         
-        public FileLoaderViewModel()
-        {
-
-        }
-
         public void OnFilesDropped(string[] files)
         {
             if (files.Length > 1)
@@ -42,20 +39,14 @@ namespace NessusVulnParser.ViewModels
                 MessageBox.Show("Multi file drop is not supported.", "Invalid Operation", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
+            string fileExtension = Path.GetExtension(files[0]);
+            if (fileExtension != ".nessus")
+            {
+                MessageBox.Show("File is not a Nessus export file.", "Invalid File", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             else
             {
-                string fileExtension = Path.GetExtension(files[0]);
-                if (fileExtension != ".nessus")
-                {
-                    MessageBox.Show("File is not a Nessus export file.", "Invalid File", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-                else
-                {
-                    ReportFilePath = Path.GetFullPath(files[0]);
-
-                    MessageBox.Show(ReportFilePath);
-
-                }
+                ReportFilePath = Path.GetFullPath(files[0]);
             }
         }
     }
