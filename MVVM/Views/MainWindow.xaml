@@ -18,9 +18,9 @@
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Style="{StaticResource ButtonTemplate}" Margin="10" Width="200" Content="Import"
-                    Command="{Binding NavigateFileLoaderCommand}" CommandParameter="Home" />
+                    Command="{Binding NavigateFileLoaderCommand}"/>
             <Button Style="{StaticResource ButtonTemplate}" Margin="10" Width="200" Content="Vulnerability List"
-                    Command="{Binding NavigateVulnListCommand}" CommandParameter="Account" IsEnabled="False"/>
+                    Command="{Binding NavigateVulnListCommand}"/>
         </StackPanel>
     </Grid>
 </Window>

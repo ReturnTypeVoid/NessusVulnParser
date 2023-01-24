@@ -6,19 +6,33 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <ListView x:Name="listView" ItemsSource="{Binding Vulnerabilities}"
-                  SelectedItem="{Binding SelectedVulnerability}">
+        <ListView ItemsSource="{Binding Vulnerabilities}" SelectedItem="{Binding SelectedVulnerability}">
             <ListView.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Copy to clipboard" Command="{Binding CopyToClipboardCommand}"
-                              CommandParameter="{Binding SelectedVulnerability}" />
+                    <MenuItem Header="Copy to clipboard" Command="{Binding CopyToClipboardCommand}" CommandParameter="{Binding SelectedVulnerability}" />
+                    <MenuItem Header="View Details" Command="{Binding ShowDetailsCommand}" CommandParameter="{Binding SelectedVulnerability}"/>
                 </ContextMenu>
             </ListView.ContextMenu>
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Name}" />
-                </DataTemplate>
-            </ListView.ItemTemplate>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn>
+                        <GridViewColumnHeader Content="Vulnerability"/>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn>
+                        <GridViewColumnHeader Content="Severity"/>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Severity}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
         </ListView>
     </Grid>
 </UserControl>

@@ -1,8 +1,10 @@
 ﻿using NessusVulnParser.Core;
 using NessusVulnParser.MVVM.Models;
+using NessusVulnParser.MVVM.Views;
 using NessusVulnParser.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Xml;
@@ -13,7 +15,8 @@ namespace NessusVulnParser.MVVM.ViewModels
         private List<Vulnerability>? _vulnerabilities;
         private Vulnerability? _selectedVulnerability;
         public RelayCommand CopyToClipboardCommand { get; }
-        
+        public RelayCommand ShowDetailsCommand { get; }
+
         private string? ReportFilePath
         {
             get {
@@ -56,6 +59,7 @@ namespace NessusVulnParser.MVVM.ViewModels
 
         public VulnListViewModel(INavigationService navService)
         {
+            ShowDetailsCommand =  new RelayCommand(execute: _ => {ShowDetails();}, canExecute: _ => true);
             _navigation = navService;
             LoadVulns();
             CopyToClipboardCommand = new RelayCommand(execute: async _ =>
@@ -63,6 +67,7 @@ namespace NessusVulnParser.MVVM.ViewModels
                 if (SelectedVulnerability != null)
                     await ToClipBoard();
             }, canExecute: _ => true);
+            
         }
 
         private List<Vulnerability> GetVulnerabilities()
@@ -82,31 +87,31 @@ namespace NessusVulnParser.MVVM.ViewModels
                 {
                     string name = vulnerabilityNode.SelectSingleNode("@pluginName")?.InnerText ?? "N/A";
                     string severity = vulnerabilityNode.SelectSingleNode("@severity")?.InnerText ?? "N/A";
-
-                    if (severity != "0")
+                    
+                    switch (severity)
                     {
-                        switch (severity)
-                        {
-                            case "1":
-                                severity = "Low";
-                                break;
-                            case "2":
-                                severity = "Medium";
-                                break;
-                            case "3":
-                                severity = "High";
-                                break;
-                            case "4":
-                                severity = "Critical";
-                                break;
-                        }
+                        case "0":
+                            severity = "Info";
+                            break;
+                        case "1":
+                            severity = "Low";
+                            break;
+                        case "2":
+                            severity = "Medium";
+                            break;
+                        case "3":
+                            severity = "High";
+                            break;
+                        case "4":
+                            severity = "Critical";
+                            break;
+                    }
 
-                        Vulnerability vulnerability = new Vulnerability(name, severity);
+                    Vulnerability vulnerability = new Vulnerability(name, severity);
 
-                        if (vulnerabilities.Find(v => v.Name == vulnerability.Name) == null)
-                        {
-                            vulnerabilities.Add(vulnerability);
-                        }
+                    if (vulnerabilities.Find(v => v.Name == vulnerability.Name) == null)
+                    {
+                        vulnerabilities.Add(vulnerability);
                     }
                 }
             }
@@ -161,6 +166,24 @@ namespace NessusVulnParser.MVVM.ViewModels
         private async void LoadVulns()
         {
             Vulnerabilities = await Task.Run(GetVulnerabilities);
+            Vulnerabilities = Vulnerabilities.OrderBy(x => x.Severity == "Info")
+                .ThenBy(x => x.Severity == "Low")
+                .ThenBy(x => x.Severity == "Medium")
+                .ThenBy(x => x.Severity == "High")
+                .ThenBy(x => x.Severity == "Critical")
+                .ToList();
         }
+        
+        private void ShowDetails()
+        {
+            var detailsWindow = new VulnDetails();
+            if (_selectedVulnerability != null)
+            {
+                var detailsViewModel = new VulnDetailsViewModel(_selectedVulnerability);
+                detailsWindow.DataContext = detailsViewModel;
+            }
+            detailsWindow.Show();
+        }
+
     }
 }
